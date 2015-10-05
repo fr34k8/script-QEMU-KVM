@@ -1,7 +1,6 @@
 #!/bin/bash
 CURRENT_PATH=$(pwd)
 IMG_FILE="$1"
-IMGF_DIR="$(dirname $1)"
 NOM_VM="$(basename ${IMG_FILE} .img)"
 
 apagar(){
@@ -9,10 +8,10 @@ apagar(){
 	COUNTER=0
 	while [[ $(virsh list --all | grep $NOM_VM | egrep 'apagado' | wc -l) = 0 ]]; do
 		echo "Esperando a la maquina para apagarse..."
-		sleep 5
+		sleep 10
 		COUNTER=$COUNTER+1
 
-		if [ $COUNTER -ge 10 ]; then
+		if [ $COUNTER -ge 5 ]; then
 	4		echo "La maquina no se cierra o está tardando un mucho, abortando el scriptñ."
 			exit
 		fi
@@ -61,9 +60,9 @@ rebase(){
 		NEW_BASE="$(basename ${REBASE_FILE} .rebase)"
 		mv "${REBASE_FILE}" "${NEW_BASE}"
 	fi
-}
 
-#if [ -n "$IMG_PATH" | ]; then
+	qemu-img create -b ${NOM_INC}.img.rebase -f qcow2 ${NOM_VM}.img
+}
 
 # Crear carpeta backup si no existe.
 mkdir -p Backups
